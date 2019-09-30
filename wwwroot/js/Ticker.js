@@ -27,6 +27,9 @@ export class Ticker {
       function loop() {
         progress = progress - speed;
 
+        const ticker = document.querySelector('.ticker');
+        const elWidth = ticker.offsetWidth;
+
         if (progress <= elWidth * -1) {
           progress = 0;
         }
@@ -37,6 +40,12 @@ export class Ticker {
       }
       loop();
     });
+
+    window.onresize = function() {
+      document.querySelectorAll('.ticker').forEach(ticker => {
+        ticker.style.minWidth = `${document.body.offsetWidth}px`;
+      });
+    };
   }
 
   _createElement(header, changeValue, value) {
@@ -46,15 +55,24 @@ export class Ticker {
   }
 
   loadData(symbols) {
-    return new Promise(resolve => {
-      fetch(`http://localhost:5000/symbols/?symbols=${symbols}`)
-        .then(response => {
+    return new Promise((resolve, reject) => {
+      if (!symbols) {
+        reject('Please pass symbols in query');
+        return;
+      }
+
+      fetch(`http://localhost:5000/symbols/?symbols=${symbols}`).then(response => {
+        if (response.ok) {
           response.json().then(json => {
             json.forEach(el => this._createElement(el.name, el.change, el.value));
             resolve(this);
           });
-        })
-        .catch(error => console.error(error));
+        } else {
+          response.text().then(body => {
+            reject(body);
+          });
+        }
+      });
     });
   }
 }

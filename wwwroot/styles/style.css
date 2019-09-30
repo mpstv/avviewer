@@ -19,12 +19,12 @@ body {
 }
 
 .ticker {
-  display: table;
+  display: flex;
   width: 100%;
 }
 
 .ticker .ticker-item {
-  display: table-cell;
+  flex: auto;
   background-color: #1e222d;
   padding: 10px;
   font-size: 16px;

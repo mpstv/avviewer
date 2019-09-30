@@ -18,15 +18,11 @@ namespace avviewer
 
     public void Configure(IApplicationBuilder app, IHostingEnvironment env)
     {
+      app.UseMiddleware<ExceptionMiddleware>();
       Configuration = new ConfigurationBuilder()
                   .SetBasePath(env.ContentRootPath)
                   .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                   .Build();
-
-      if (env.IsDevelopment())
-      {
-        app.UseDeveloperExceptionPage();
-      }
 
       app.UseMvc(routes =>
       {
